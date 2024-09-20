@@ -7,12 +7,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#define int long long
+
 int N, ssize;
 key_t s_key, m_key;
 
 struct MessageBuffer
 {
-    long mtype;
+    int mtype;
     int key;
 };
 
@@ -25,9 +27,9 @@ struct HashNode
 
 struct HashNode *hashTable[100003] = {NULL};
 
-unsigned int hash(char *str)
+int hash(char *str)
 {
-    unsigned long hash = 0;
+    int hash = 0;
     int c;
     while (*str != '\0')
     {
@@ -40,7 +42,7 @@ unsigned int hash(char *str)
 
 void insert(char *word)
 {
-    unsigned int i = hash(word);
+    int i = hash(word);
     struct HashNode *node = hashTable[i];
 
     while (node != NULL)
@@ -67,7 +69,7 @@ void insert(char *word)
 
 int occ_count(char *word)
 {
-    unsigned int i = hash(word);
+    int i = hash(word);
     struct HashNode *node = hashTable[i];
     while (node != NULL)
     {
@@ -104,7 +106,7 @@ void freetable()
     }
 }
 
-int main(int argc, char *argv[])
+signed main(int argc, char *argv[])
 {
     int t = atoi(argv[1]);
 
@@ -133,7 +135,7 @@ int main(int argc, char *argv[])
 
         if (i > 0)
         {
-            msgrcv(msgq_id, &msg_r, sizeof(struct MessageBuffer) - sizeof(long), 2, 0);
+            msgrcv(msgq_id, &msg_r, sizeof(struct MessageBuffer) - sizeof(int), 2, 0);
             d_key = msg_r.key;
         }
 
@@ -155,7 +157,7 @@ int main(int argc, char *argv[])
         struct MessageBuffer msg_s;
         msg_s.mtype = 1;
         msg_s.key = count;
-        msgsnd(msgq_id, &msg_s, sizeof(struct MessageBuffer) - sizeof(long), 0);
+        msgsnd(msgq_id, &msg_s, sizeof(struct MessageBuffer) - sizeof(int), 0);
     }
     freetable();
     shmdt(shmptr);
