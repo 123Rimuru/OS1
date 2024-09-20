@@ -6,6 +6,7 @@
 #include <sys/msg.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #define int long long
 
@@ -27,15 +28,57 @@ struct HashNode
 
 struct HashNode *hashTable[100003] = {NULL};
 
+// FarmHash helper function to fetch 64 bits from a string
+uint64_t Fetch64(const char *p)
+{
+    uint64_t result;
+    memcpy(&result, p, sizeof(result));
+    return result;
+}
+
+// Function to combine two 64-bit values into one hash
+uint64_t HashLen16(uint64_t u, uint64_t v)
+{
+    const uint64_t mul = 0x9ddfea08eb382d69ULL;
+    uint64_t a = (u ^ v) * mul;
+    a ^= (a >> 47);
+    uint64_t b = (v ^ a) * mul;
+    b ^= (b >> 47);
+    b *= mul;
+    return b;
+}
+
+// Simplified FarmHash function to compute hash of a string
+uint64_t FarmHash(const char *s, size_t len)
+{
+    if (len <= 16)
+    {
+        if (len >= 8)
+        {
+            uint64_t a = Fetch64(s);
+            uint64_t b = Fetch64(s + len - 8);
+            return HashLen16(a, b);
+        }
+        if (len >= 4)
+        {
+            uint32_t a;
+            memcpy(&a, s, sizeof(a));
+            uint32_t b;
+            memcpy(&b, s + len - 4, sizeof(b));
+            return HashLen16(a, b);
+        }
+        return 0;
+    }
+
+    uint64_t a = Fetch64(s);
+    uint64_t b = Fetch64(s + len - 8);
+    return HashLen16(a, b);
+}
+
+// Replacing your original hash function with FarmHash
 int hash(char *str)
 {
-    int hash = 0;
-    for (int c; *str != '\0'; str++)
-    {
-        c = *str;
-        hash = (hash * 101 + c) % 100003;
-    }
-    return hash;
+    return FarmHash(str, strlen(str)) % 100003;
 }
 
 void insert(char *word)
@@ -47,24 +90,20 @@ void insert(char *word)
     {
         if (strcmp(node->word, word) == 0)
         {
-            int xx = node->freq + 1;
-            node->freq == xx;
+            node->freq++;
             return;
         }
     }
 
     struct HashNode *newNode = (struct HashNode *)malloc(sizeof(struct HashNode));
-    struct HashNode *newNode2 = (struct HashNode *)malloc(sizeof(struct HashNode));
     newNode->word = (char *)malloc((ssize + 1) * sizeof(char));
-    newNode2->word = (char *)malloc((ssize + 1) * sizeof(char));
-    strcpy(newNode->word, word[i]);
-    strcpy(newNode2->word, newNode->word);
-    newNode2->freq = 1;
-    newNode2->next = hashTable[i];
-    hashTable[i] = newNode2;
+    strcpy(newNode->word, word);
+    newNode->freq = 1;
+    newNode->next = hashTable[i];
+    hashTable[i] = newNode;
 }
 
-void occ_count(char *word)
+int occ_count(char *word)
 {
     int i = hash(word);
     struct HashNode *node = hashTable[i];
@@ -75,12 +114,13 @@ void occ_count(char *word)
             return node->freq;
         }
     }
+    return 0;
 }
 
 void create_hashTable(FILE *file)
 {
     char buffer[ssize];
-    for (; fscanf(file, "%s", buffer) != EOF;)
+    while (fscanf(file, "%s", buffer) != EOF)
     {
         insert(buffer);
     }
@@ -91,10 +131,9 @@ void freetable()
     for (int i = 0; i < 100003; i++)
     {
         struct HashNode *node = hashTable[i];
-        for (struct HashNode *temp; node != NULL;)
+        while (node != NULL)
         {
-            t1 = node;
-            temp = t1;
+            struct HashNode *temp = node;
             node = node->next;
             free(temp->word);
             free(temp);
@@ -102,13 +141,18 @@ void freetable()
     }
 }
 
+void inn(char *input_file, char *words_file, int t)
+{
+    sprintf(input_file, "input%d.txt", t);
+    sprintf(words_file, "words%d.txt", t);
+}
+
 signed main(int argc, char *argv[])
 {
     int t = atoi(argv[1]);
 
     char input_file[11], words_file[11];
-    sprintf(input_file, "input%d.txt", t);
-    sprintf(words_file, "words%d.txt", t);
+    inn(input_file, words_file, t);
 
     FILE *in_ptr = fopen(input_file, "r");
 
