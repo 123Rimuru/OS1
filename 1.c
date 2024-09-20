@@ -35,7 +35,6 @@ int Fetch64(const char *p)
     return result;
 }
 
-// Function to combine two 64-bit values into one hash
 int HashLen16(int u, int v)
 {
     const int mul = 0x9ddfea08eb382d69ULL;
@@ -73,7 +72,6 @@ int FarmHash(const char *s, size_t len)
     return HashLen16(a, b);
 }
 
-// Replacing your original hash function with FarmHash
 int hash(char *str)
 {
     return FarmHash(str, strlen(str)) % 100003;
