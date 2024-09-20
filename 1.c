@@ -30,11 +30,9 @@ struct HashNode *hashTable[100003] = {NULL};
 int hash(char *str)
 {
     int hash = 0;
-    int c;
-    while (*str != '\0')
+    for (int c; *str != '\0'; str++)
     {
         c = *str;
-        *str++;
         hash = (hash * 101 + c) % 100003;
     }
     return hash;
