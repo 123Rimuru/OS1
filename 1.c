@@ -85,7 +85,7 @@ int occ_count(char *word)
 void create_hashTable(FILE *file)
 {
     char buffer[ssize];
-    while (fscanf(file, "%s", buffer) != EOF)
+    for (; fscanf(file, "%s", buffer) != EOF;)
     {
         insert(buffer);
     }
