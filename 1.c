@@ -96,9 +96,9 @@ void freetable()
     for (int i = 0; i < 100003; i++)
     {
         struct HashNode *node = hashTable[i];
-        while (node != NULL)
+        for (struct HashNode *temp; node != NULL;)
         {
-            struct HashNode *temp = node;
+            temp = node;
             node = node->next;
             free(temp->word);
             free(temp);
