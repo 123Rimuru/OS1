@@ -6,7 +6,6 @@
 #include <sys/msg.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <stdint.h>
 
 #define int long long
 
@@ -28,53 +27,58 @@ struct HashNode
 
 struct HashNode *hashTable[100003] = {NULL};
 
-int Fetch64(const char *p)
+long long SuperFastHash(const char *data, int len)
 {
-    int result;
-    memcpy(&result, p, sizeof(result));
-    return result;
-}
+    long long hash = len, tmp;
+    int rem;
 
-int HashLen16(int u, int v)
-{
-    const int mul = 0x9ddfea08eb382d69ULL;
-    int a = (u ^ v) * mul;
-    a ^= (a >> 47);
-    int b = (v ^ a) * mul;
-    b ^= (b >> 47);
-    b *= mul;
-    return b;
-}
-
-int FarmHash(const char *s, size_t len)
-{
-    if (len <= 16)
-    {
-        if (len >= 8)
-        {
-            int a = Fetch64(s);
-            int b = Fetch64(s + len - 8);
-            return HashLen16(a, b);
-        }
-        if (len >= 4)
-        {
-            int a;
-            memcpy(&a, s, sizeof(a));
-            int b;
-            memcpy(&b, s + len - 4, sizeof(b));
-            return HashLen16(a, b);
-        }
+    if (len <= 0 || data == NULL)
         return 0;
+
+    rem = len & 3;
+    len >>= 2;
+
+    for (; len > 0; len--)
+    {
+        hash += *(const short *)data;
+        tmp = (*(const short *)(data + 2) << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        data += 4;
+        hash += hash >> 11;
     }
 
-    int a = Fetch64(s);
-    int b = Fetch64(s + len - 8);
-    return HashLen16(a, b);
+    switch (rem)
+    {
+    case 3:
+        hash += *(const short *)data;
+        hash ^= hash << 16;
+        hash ^= ((long long)data[2]) << 18;
+        hash += hash >> 11;
+        break;
+    case 2:
+        hash += *(const short *)data;
+        hash ^= hash << 11;
+        hash += hash >> 17;
+        break;
+    case 1:
+        hash += (long long)*data;
+        hash ^= hash << 10;
+        hash += hash >> 1;
+    }
+
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 4;
+    hash += hash >> 17;
+    hash ^= hash << 25;
+    hash += hash >> 6;
+
+    return hash;
 }
 
 int hash(char *str)
 {
-    return FarmHash(str, strlen(str)) % 100003;
+    return SuperFastHash(str, strlen(str)) % 100003;
 }
 
 void insert(char *word)
