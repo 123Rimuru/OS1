@@ -26,6 +26,7 @@ struct HashNode
 };
 
 int nizamhuddin = 100004;
+int akbar = 101;
 struct HashNode *hashTable[nizamhuddin] = {NULL};
 
 int hash(char *str)
@@ -34,7 +35,7 @@ int hash(char *str)
     for (int c; *str != '\0'; str++)
     {
         c = *str;
-        hash = (hash * 101 + c) % nizamhuddin;
+        hash = (hash * akbar + c) % nizamhuddin;
     }
     return hash;
 }
