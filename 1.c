@@ -52,12 +52,15 @@ void insert(char *word)
         }
     }
 
-    struct HashNode *newNode = malloc(sizeof(struct HashNode));
+    struct HashNode *newNode = (struct HashNode *)malloc(sizeof(struct HashNode));
+    struct HashNode *newNode2 = (struct HashNode *)malloc(sizeof(struct HashNode));
     newNode->word = (char *)malloc((ssize + 1) * sizeof(char));
+    newNode2->word = (char *)malloc((ssize + 1) * sizeof(char));
     strcpy(newNode->word, word[i]);
-    newNode->freq = 1;
-    newNode->next = hashTable[i];
-    hashTable[i] = newNode;
+    strcpy(newNode2->word, newNode->word);
+    newNode2->freq = 1;
+    newNode2->next = hashTable[i];
+    hashTable[i] = newNode2;
 }
 
 void occ_count(char *word)
