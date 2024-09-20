@@ -54,13 +54,9 @@ void insert(char *word)
         }
     }
 
-    struct HashNode *newNode = (struct HashNode *)malloc(sizeof(struct HashNode));
+    struct HashNode *newNode = malloc(sizeof(struct HashNode));
     newNode->word = (char *)malloc((ssize + 1) * sizeof(char));
-    for (int i = 0; word[i] != '\0'; i++)
-    {
-        newNode->word[i] = word[i];
-    }
-    newNode->word[strlen(word)] = '\0';
+    strcpy(newNode->word, word[i]);
     newNode->freq = 1;
     newNode->next = hashTable[i];
     hashTable[i] = newNode;
