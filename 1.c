@@ -45,14 +45,13 @@ void insert(char *word)
     int i = hash(word);
     struct HashNode *node = hashTable[i];
 
-    while (node != NULL)
+    for (; node != NULL; node = node->next)
     {
         if (strcmp(node->word, word) == 0)
         {
             node->freq++;
             return;
         }
-        node = node->next;
     }
 
     struct HashNode *newNode = (struct HashNode *)malloc(sizeof(struct HashNode));
