@@ -47,7 +47,8 @@ void insert(char *word)
     {
         if (strcmp(node->word, word) == 0)
         {
-            node->freq++;
+            int xx = node->freq + 1;
+            node->freq == xx;
             return;
         }
     }
