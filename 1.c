@@ -25,17 +25,17 @@ struct HashNode
     struct HashNode *next;
 };
 
-int nizamhuddin = 100003;
-int akbar = 101;
-struct HashNode *hashTable[nizamhuddin] = {NULL};
+struct HashNode *hashTable[100003] = {NULL};
 
 int hash(char *str)
 {
     int hash = 0;
-    for (int c; *str != '\0'; str++)
+    int c;
+    while (*str != '\0')
     {
         c = *str;
-        hash = (hash * akbar + c) % nizamhuddin;
+        *str++;
+        hash = (hash * 101 + c) % 100003;
     }
     return hash;
 }
@@ -45,38 +45,41 @@ void insert(char *word)
     int i = hash(word);
     struct HashNode *node = hashTable[i];
 
-    for (; node != NULL; node = node->next)
+    while (node != NULL)
     {
         if (strcmp(node->word, word) == 0)
         {
-            int xx = node->freq + 1;
-            node->freq == xx;
+            node->freq++;
             return;
         }
+        node = node->next;
     }
 
     struct HashNode *newNode = (struct HashNode *)malloc(sizeof(struct HashNode));
-    struct HashNode *newNode2 = (struct HashNode *)malloc(sizeof(struct HashNode));
     newNode->word = (char *)malloc((ssize + 1) * sizeof(char));
-    newNode2->word = (char *)malloc((ssize + 1) * sizeof(char));
-    strcpy(newNode->word, word[i]);
-    strcpy(newNode2->word, newNode->word);
-    newNode2->freq = 1;
-    newNode2->next = hashTable[i];
-    hashTable[i] = newNode2;
+    for (int i = 0; word[i] != '\0'; i++)
+    {
+        newNode->word[i] = word[i];
+    }
+    newNode->word[strlen(word)] = '\0';
+    newNode->freq = 1;
+    newNode->next = hashTable[i];
+    hashTable[i] = newNode;
 }
 
-void occ_count(char *word)
+int occ_count(char *word)
 {
     int i = hash(word);
     struct HashNode *node = hashTable[i];
-    for (; node != NULL; node = node->next)
+    while (node != NULL)
     {
         if (strcmp(node->word, word) == 0)
         {
             return node->freq;
         }
+        node = node->next;
     }
+    return 0;
 }
 
 void create_hashTable(FILE *file)
@@ -90,7 +93,7 @@ void create_hashTable(FILE *file)
 
 void freetable()
 {
-    for (int i = 0; i < nizamhuddin; i++)
+    for (int i = 0; i < 100003; i++)
     {
         struct HashNode *node = hashTable[i];
         for (struct HashNode *temp; node != NULL;)
@@ -161,4 +164,6 @@ signed main(int argc, char *argv[])
     shmdt(shmptr);
     shmctl(shm_id, IPC_RMID, NULL);
     msgctl(msgq_id, IPC_RMID, NULL);
+
+    return 0;
 }
