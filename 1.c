@@ -25,7 +25,8 @@ struct HashNode
     struct HashNode *next;
 };
 
-struct HashNode *hashTable[100003] = {NULL};
+int nizamhuddin = 100004;
+struct HashNode *hashTable[nizamhuddin] = {NULL};
 
 int hash(char *str)
 {
@@ -33,7 +34,7 @@ int hash(char *str)
     for (int c; *str != '\0'; str++)
     {
         c = *str;
-        hash = (hash * 101 + c) % 100003;
+        hash = (hash * 101 + c) % nizamhuddin;
     }
     return hash;
 }
@@ -88,7 +89,7 @@ void create_hashTable(FILE *file)
 
 void freetable()
 {
-    for (int i = 0; i < 100003; i++)
+    for (int i = 0; i < nizamhuddin; i++)
     {
         struct HashNode *node = hashTable[i];
         for (struct HashNode *temp; node != NULL;)
