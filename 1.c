@@ -25,7 +25,7 @@ struct HashNode
     struct HashNode *next;
 };
 
-int nizamhuddin = 100004;
+int nizamhuddin = 100003;
 int akbar = 101;
 struct HashNode *hashTable[nizamhuddin] = {NULL};
 
