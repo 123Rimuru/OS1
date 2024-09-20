@@ -67,19 +67,17 @@ void insert(char *word)
     hashTable[i] = newNode;
 }
 
-int occ_count(char *word)
+void occ_count(char *word)
 {
     int i = hash(word);
     struct HashNode *node = hashTable[i];
-    while (node != NULL)
+    for (; node != NULL; node = node->next)
     {
         if (strcmp(node->word, word) == 0)
         {
             return node->freq;
         }
-        node = node->next;
     }
-    return 0;
 }
 
 void create_hashTable(FILE *file)
