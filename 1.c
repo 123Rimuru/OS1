@@ -28,50 +28,48 @@ struct HashNode
 
 struct HashNode *hashTable[100003] = {NULL};
 
-// FarmHash helper function to fetch 64 bits from a string
-uint64_t Fetch64(const char *p)
+int Fetch64(const char *p)
 {
-    uint64_t result;
+    int result;
     memcpy(&result, p, sizeof(result));
     return result;
 }
 
 // Function to combine two 64-bit values into one hash
-uint64_t HashLen16(uint64_t u, uint64_t v)
+int HashLen16(int u, int v)
 {
-    const uint64_t mul = 0x9ddfea08eb382d69ULL;
-    uint64_t a = (u ^ v) * mul;
+    const int mul = 0x9ddfea08eb382d69ULL;
+    int a = (u ^ v) * mul;
     a ^= (a >> 47);
-    uint64_t b = (v ^ a) * mul;
+    int b = (v ^ a) * mul;
     b ^= (b >> 47);
     b *= mul;
     return b;
 }
 
-// Simplified FarmHash function to compute hash of a string
-uint64_t FarmHash(const char *s, size_t len)
+int FarmHash(const char *s, size_t len)
 {
     if (len <= 16)
     {
         if (len >= 8)
         {
-            uint64_t a = Fetch64(s);
-            uint64_t b = Fetch64(s + len - 8);
+            int a = Fetch64(s);
+            int b = Fetch64(s + len - 8);
             return HashLen16(a, b);
         }
         if (len >= 4)
         {
-            uint32_t a;
+            int a;
             memcpy(&a, s, sizeof(a));
-            uint32_t b;
+            int b;
             memcpy(&b, s + len - 4, sizeof(b));
             return HashLen16(a, b);
         }
         return 0;
     }
 
-    uint64_t a = Fetch64(s);
-    uint64_t b = Fetch64(s + len - 8);
+    int a = Fetch64(s);
+    int b = Fetch64(s + len - 8);
     return HashLen16(a, b);
 }
 
