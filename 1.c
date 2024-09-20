@@ -155,6 +155,4 @@ signed main(int argc, char *argv[])
     shmdt(shmptr);
     shmctl(shm_id, IPC_RMID, NULL);
     msgctl(msgq_id, IPC_RMID, NULL);
-
-    return 0;
 }
